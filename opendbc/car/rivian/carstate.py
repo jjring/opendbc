@@ -77,15 +77,16 @@ class CarState(CarStateBase):
     else:
       self.decrease_counter = 0
 
-    if (accel - self.last_accel) == 0 and accel > 0.58:
+    if accel == self.last_accel and accel > 0.58:
       self.increase_counter += 1
     else:
       self.increase_counter = 0
+    self.last_accel = accel
 
     if self.decrease_counter != 0 and self.decrease_counter % 50 == 0:
       self.set_speed -= 1 * CV.MPH_TO_MS
 
-    if self.increase_counter != 0 and self.increase_counter % 100 == 0:
+    if self.increase_counter != 0 and self.increase_counter % 50 == 0:
       self.set_speed += 1 * CV.MPH_TO_MS
 
     if not ret.cruiseState.enabled:
