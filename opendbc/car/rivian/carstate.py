@@ -21,7 +21,8 @@ class CarState(CarStateBase):
     self.set_speed = 10
     self.sign_speed = 10
     self.decrease_counter = 0
-    self.increase_counter = 1
+    self.increase_counter = 0
+    self.last_accel = 0
 
     self.acm_lka_hba_cmd = None
     self.sccm_wheel_touch = None
@@ -71,21 +72,21 @@ class CarState(CarStateBase):
       self.set_speed += button_press * CV.MPH_TO_MS
 
     accel = cp_cam.vl["ACM_longitudinalRequest"]["ACM_AccelerationRequest"]
-    if -3.86 >= accel >= -3.94:
+    if -3.88 >= accel >= -3.94:
       self.decrease_counter += 1
     else:
       self.decrease_counter = 0
 
-    if 0.57 <= accel <= 0.62:
+    if (accel - self.last_accel) == 0 and accel > 0.5:
       self.increase_counter += 1
     else:
       self.increase_counter = 0
 
-    if self.decrease_counter != 0 and self.decrease_counter % 100 == 0:
-      self.set_speed -= 1
+    if self.decrease_counter != 0 and self.decrease_counter % 50 == 0:
+      self.set_speed -= 1 * CV.MPH_TO_MS
 
     if self.increase_counter != 0 and self.increase_counter % 100 == 0:
-      self.set_speed += 1
+      self.set_speed += 1 * CV.MPH_TO_MS
 
     if not ret.cruiseState.enabled:
       self.set_speed = ret.vEgo
