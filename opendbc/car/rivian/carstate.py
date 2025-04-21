@@ -77,7 +77,7 @@ class CarState(CarStateBase):
     else:
       self.decrease_counter = 0
 
-    if accel == self.last_accel and accel > 1:
+    if accel == self.last_accel and accel > 1.7:
       self.increase_counter += 1
     else:
       self.increase_counter = 0
